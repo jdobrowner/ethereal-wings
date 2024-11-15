@@ -1,8 +1,8 @@
 <script lang="ts">
   import logo from "./assets/logo.png";
   import harp from "./assets/heart-harp.jpg";
-  import { Howl } from "howler";
   import Tube from "./components/Tube.svelte";
+  import type { TubeConfiguration } from "./types";
 
   // Define audio files
   let audioFiles: string[] = [
@@ -14,29 +14,34 @@
     "audio/D6.m4a",
   ];
 
-  // Create a DynamicsCompressorNode
-  // const compressor = Howler.ctx.createDynamicsCompressor();
-  // compressor.threshold.setValueAtTime(-50, Howler.ctx.currentTime); // Adjust to control when compression kicks in
-  // compressor.knee.setValueAtTime(60, Howler.ctx.currentTime); // Smoothing around the threshold
-  // compressor.ratio.setValueAtTime(15, Howler.ctx.currentTime); // The amount of compression
-  // compressor.attack.setValueAtTime(0, Howler.ctx.currentTime); // How quickly the compressor starts working
-  // compressor.release.setValueAtTime(0.25, Howler.ctx.currentTime); // How quickly it stops compressing
-
-  // Create Howler instances for each audio file
-  let sounds = audioFiles.map((file) => new Howl({ src: [file], volume: 0.4 }));
-  // compressor.connect(Howler.ctx.destination);
+  const tubes: TubeConfiguration[] = [
+    {
+      length: 18,
+      position: { x: -10, y: 0, z: 0 },
+      soundFile: "/audio/D6.m4a",
+    },
+    {
+      length: 19,
+      position: { x: -6, y: 0, z: 0 },
+      soundFile: "/audio/C6.m4a",
+    },
+    { length: 20, position: { x: -2, y: 0, z: 0 }, soundFile: "/audio/A5.m4a" },
+    { length: 21, position: { x: 2, y: 0, z: 0 }, soundFile: "/audio/G5.m4a" },
+    { length: 22, position: { x: 6, y: 0, z: 0 }, soundFile: "/audio/E6.m4a" },
+    { length: 23, position: { x: 10, y: 0, z: 0 }, soundFile: "/audio/E5.m4a" },
+  ];
 </script>
 
-<main>
+<!-- <main>
   <img src={logo} alt="Ethereal Wings" />
   <div class="harp-container">
-    <!-- <img class="harp-img" src={harp} alt="Heart E" /> -->
-    <!-- <img src={harpImage} alt="Crystal Harp" /> -->
     {#each sounds as sound, i}
       <Tube {sound} index={i} />
     {/each}
   </div>
-</main>
+</main> -->
+
+<Tube tubeConfigurations={tubes} />
 
 <style>
   main {
@@ -50,7 +55,7 @@
     position: relative;
     /* height: 800px; */
     display: flex;
-    gap: 30px;
+    /* gap: 30px; */
     align-items: center;
     padding-bottom: 15vh;
   }
