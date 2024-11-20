@@ -68,10 +68,10 @@
     ambientLight: THREE.AmbientLight;
     directionalLight: THREE.DirectionalLight;
   } {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Increase intensity to make tubes more visible
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5); // Increase intensity
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
     directionalLight.position.set(15, 20, 20);
     directionalLight.castShadow = true;
     scene.add(directionalLight);
@@ -118,7 +118,7 @@
       reflectivity: 0.9,
       sheen: 0.6,
       sheenColor: new THREE.Color(0xffffff),
-      envMap: environmentMap, // Ensure envMap is assigned
+      envMap: environmentMap,
       envMapIntensity: 2.0,
       emissive: new THREE.Color(0x000000),
       emissiveIntensity: 0.2,
@@ -146,7 +146,7 @@
       clearcoat: 0.8,
       clearcoatRoughness: 0.1,
       reflectivity: 0.5,
-      envMap: environmentMap, // Ensure envMap is assigned
+      envMap: environmentMap,
     });
     const innerTube = new THREE.Mesh(innerGeometry, innerMaterial);
     innerTube.position.set(position.x, position.y, position.z);
@@ -161,7 +161,6 @@
     // Add playSound functionality to userData
     outerTube.userData = {
       playSound: () => {
-        console.log("Attempting to play sound:", soundFile);
         audio.stop();
         audio.play();
 
@@ -180,56 +179,34 @@
     };
   }
 
-  function initializeInteractions(
-    scene: THREE.Scene,
-    camera: THREE.PerspectiveCamera,
-    raycaster: THREE.Raycaster,
-    mouse: THREE.Vector2
-  ) {
-    let currentlyHovered: THREE.Mesh | null = null;
+  let currentlyHovered: THREE.Mesh | null = null;
 
-    window.addEventListener("mousemove", (event: MouseEvent) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(scene.children, true);
-
-      if (intersects.length > 0) {
-        const intersectedObject = intersects[0].object as THREE.Mesh;
-        if (currentlyHovered !== intersectedObject) {
-          if (currentlyHovered) {
-            // Reset the previous hovered material
-            (currentlyHovered.material as THREE.MeshPhysicalMaterial).emissive =
-              new THREE.Color(0x000000);
-          }
-          // Set new hovered material
-          (intersectedObject.material as THREE.MeshPhysicalMaterial).emissive =
-            new THREE.Color(0xffcc00);
-          currentlyHovered = intersectedObject;
-        }
-      } else {
+  function handlePointerMove(scene: THREE.Scene, raycaster: THREE.Raycaster) {
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if (intersects.length > 0) {
+      const intersectedObject = intersects[0].object as THREE.Mesh;
+      if (currentlyHovered !== intersectedObject) {
         if (currentlyHovered) {
-          // Reset material if no longer hovered
           (currentlyHovered.material as THREE.MeshPhysicalMaterial).emissive =
             new THREE.Color(0x000000);
-          currentlyHovered = null;
         }
+        (intersectedObject.material as THREE.MeshPhysicalMaterial).emissive =
+          new THREE.Color(0xffcc00);
+        currentlyHovered = intersectedObject;
       }
-    });
+    } else if (currentlyHovered) {
+      (currentlyHovered.material as THREE.MeshPhysicalMaterial).emissive =
+        new THREE.Color(0x000000);
+      currentlyHovered = null;
+    }
+  }
 
-    window.addEventListener("click", (event: MouseEvent) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(scene.children, true);
-
-      intersects.forEach((intersect) => {
-        if (intersect.object.userData.playSound) {
-          intersect.object.userData.playSound();
-        }
-      });
+  function handlePointerClick(scene: THREE.Scene, raycaster: THREE.Raycaster) {
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    intersects.forEach((intersect) => {
+      if (intersect.object.userData.playSound) {
+        intersect.object.userData.playSound();
+      }
     });
   }
 
@@ -246,13 +223,50 @@
     // Tube creation
     createTubes(scene, tubeConfigurations);
 
-    // Initialize interactions
-    initializeInteractions(scene, camera, raycaster, mouse);
+    // Event handlers
+    function handleMouseMove(event: MouseEvent) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      handlePointerMove(scene, raycaster);
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        handlePointerMove(scene, raycaster);
+      }
+    }
+
+    function handleClick(event: MouseEvent) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      handlePointerClick(scene, raycaster);
+    }
+
+    function handleTouchStart(event: TouchEvent) {
+      if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        handlePointerClick(scene, raycaster);
+      }
+    }
+
+    // Add event listeners
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("click", handleClick);
+    window.addEventListener("touchstart", handleTouchStart);
 
     // Animation loop
     function animate() {
       TWEEN.update();
-      // Update scene fog and directional light intensity
       const time = Date.now() * 0.0001;
       const hue = (time * 360) % 360;
       scene.fog = new THREE.Fog(
@@ -272,6 +286,10 @@
       if (container.firstChild) {
         container.removeChild(container.firstChild);
       }
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("click", handleClick);
+      window.removeEventListener("touchstart", handleTouchStart);
     };
   });
 </script>
@@ -279,8 +297,14 @@
 <div bind:this={container} class="container"></div>
 
 <style>
+  :global(body) {
+    margin: 0;
+    overflow: hidden;
+  }
+
   .container {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
+    position: relative;
   }
 </style>
