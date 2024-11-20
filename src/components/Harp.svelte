@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as THREE from "three";
+  import { Howl } from "howler";
   import { onMount } from "svelte";
   import TWEEN from "@tweenjs/tween.js";
   import type { TubeConfiguration } from "../types";
@@ -141,9 +142,11 @@
       innerTube.position.set(position.x, position.y, position.z);
       scene.add(innerTube);
 
-      // Audio setup for the tube
-      const audio = new Audio(soundFile);
-      audio.volume = 0.5;
+      const audio = new Howl({
+        src: [soundFile],
+        volume: 0.5,
+        html5: true, // Ensures the sound plays properly on mobile devices
+      });
       let lastPlayed = 0;
       outerTube.userData = {
         playSound: () => {
@@ -151,11 +154,8 @@
           const now = Date.now();
           if (now - lastPlayed > 300) {
             // 300ms debounce to prevent rapid firing
-            audio.pause();
-            audio.currentTime = 0;
-            audio.play().catch((error) => {
-              console.error("Audio play failed:", error);
-            });
+            audio.stop();
+            audio.play();
             lastPlayed = now;
             // Animate tube shrinking effect
             outerTube.scale.set(0.98, 0.98, 0.98);
