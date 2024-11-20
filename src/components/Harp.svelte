@@ -33,6 +33,12 @@
     camera.position.set(0, 0, 30); // Adjust camera position to see all tubes
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
@@ -151,8 +157,8 @@
             });
             lastPlayed = now;
             // Animate tube shrinking effect
-            outerTube.scale.set(0.985, 0.985, 0.985);
-            innerTube.scale.set(0.985, 0.985, 0.985);
+            outerTube.scale.set(0.98, 0.98, 0.98);
+            innerTube.scale.set(0.98, 0.98, 0.98);
             // Smoothly animate return to normal size
             new TWEEN.Tween(outerTube.scale)
               .to({ x: 1, y: 1, z: 1 }, 600)
