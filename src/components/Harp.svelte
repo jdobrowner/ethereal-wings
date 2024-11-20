@@ -52,12 +52,22 @@
     environmentMap.mapping = THREE.CubeRefractionMapping;
 
     // Add lights to make tubes visible
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // soft ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // soft ambient light, slightly increased
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(10, 10, 10);
+    directionalLight.position.set(15, 20, 20); // Adjusted to give better overall lighting
+    directionalLight.castShadow = true;
     scene.add(directionalLight);
+
+    // Add spotlight for each tube to highlight it
+    tubeConfigurations.forEach(({ position }) => {
+      const spotlight = new THREE.SpotLight(0xffffff, 1.2);
+      spotlight.position.set(position.x + 5, position.y + 10, position.z + 5);
+      spotlight.target.position.set(position.x, position.y, position.z);
+      scene.add(spotlight);
+      scene.add(spotlight.target);
+    });
 
     // Function to create a tube
     function createTube(
