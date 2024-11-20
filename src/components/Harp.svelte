@@ -17,6 +17,7 @@
 
   onMount(() => {
     // Create raycaster and mouse vector for detecting pointer events
+    let currentlyHovered: THREE.Mesh | null = null;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -101,6 +102,8 @@
         iridescence: 1.0, // Increase iridescence for stronger rainbow reflections
         iridescenceIOR: 1.3, // Index of refraction to enhance iridescence effect
         iridescenceThicknessRange: [300, 600], // Control thickness for rainbow reflections
+        emissive: new THREE.Color(0x000000),
+        emissiveIntensity: 0.2,
       });
       const outerTube = new THREE.Mesh(outerGeometry, outerMaterial);
       outerTube.position.set(position.x, position.y, position.z);
@@ -126,7 +129,6 @@
         clearcoatRoughness: 0.1,
         reflectivity: 0.5,
       });
-      // Add an inner tube to make the outer tube look like has thicker cylinder walls
       const innerTube = new THREE.Mesh(innerGeometry, innerMaterial);
       innerTube.position.set(position.x, position.y, position.z);
       scene.add(innerTube);
@@ -158,6 +160,35 @@
     });
 
     // Mouse event for interaction
+    window.addEventListener("mousemove", (event: MouseEvent) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children);
+
+      if (intersects.length > 0) {
+        const intersectedObject = intersects[0].object as THREE.Mesh;
+        if (currentlyHovered !== intersectedObject) {
+          if (currentlyHovered) {
+            // Reset previous hovered material
+            (currentlyHovered.material as THREE.MeshPhysicalMaterial).emissive =
+              new THREE.Color(0x000000);
+          }
+          // Set new hovered material
+          (intersectedObject.material as THREE.MeshPhysicalMaterial).emissive =
+            new THREE.Color(0xffcc00);
+          currentlyHovered = intersectedObject;
+        }
+      } else {
+        if (currentlyHovered) {
+          // Reset material if no longer hovered
+          (currentlyHovered.material as THREE.MeshPhysicalMaterial).emissive =
+            new THREE.Color(0x000000);
+          currentlyHovered = null;
+        }
+      }
+    });
     window.addEventListener("click", (event: MouseEvent) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
