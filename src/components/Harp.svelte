@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as THREE from "three";
   import { onMount } from "svelte";
+  import TWEEN from "@tweenjs/tween.js";
   import type { TubeConfiguration } from "../types";
 
   export let tubeConfigurations: TubeConfiguration[];
@@ -149,6 +150,18 @@
               console.error("Audio play failed:", error);
             });
             lastPlayed = now;
+            // Animate tube shrinking effect
+            outerTube.scale.set(0.985, 0.985, 0.985);
+            innerTube.scale.set(0.985, 0.985, 0.985);
+            // Smoothly animate return to normal size
+            new TWEEN.Tween(outerTube.scale)
+              .to({ x: 1, y: 1, z: 1 }, 600)
+              .easing(TWEEN.Easing.Quadratic.Out)
+              .start();
+            new TWEEN.Tween(innerTube.scale)
+              .to({ x: 1, y: 1, z: 1 }, 600)
+              .easing(TWEEN.Easing.Quadratic.Out)
+              .start();
           }
         },
       };
@@ -205,6 +218,7 @@
 
     // Render loop
     function animate() {
+      TWEEN.update();
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
