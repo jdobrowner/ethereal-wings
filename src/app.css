@@ -13,3 +13,35 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+img
+ {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  box-sizing: border-box;
+  font-size: 100%;
+  font: inherit;
+}
+
+@font-face {
+  font-family: 'FifthCenturyCaps';
+  src: url('/src/fonts/FifthCenturyCaps.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body, h1, h2 {
+  font-family: 'FifthCenturyCaps', sans-serif;
+}
