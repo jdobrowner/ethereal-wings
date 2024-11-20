@@ -6,6 +6,14 @@
   export let tubeConfigurations: TubeConfiguration[];
 
   let container: HTMLDivElement;
+  let CUBE_MAP = [
+    "/textures/sunset_cube_map_2/px.png",
+    "/textures/sunset_cube_map_2/nx.png",
+    "/textures/sunset_cube_map_2/py.png",
+    "/textures/sunset_cube_map_2/ny.png",
+    "/textures/sunset_cube_map_2/pz.png",
+    "/textures/sunset_cube_map_2/nz.png",
+  ];
 
   onMount(() => {
     // Create raycaster and mouse vector for detecting pointer events
@@ -29,14 +37,7 @@
     // Load environment map from CubeTextureLoader
     const loader = new THREE.CubeTextureLoader();
     const environmentMap = loader.load(
-      [
-        "/textures/sunset_cube_map_2/px.png",
-        "/textures/sunset_cube_map_2/nx.png",
-        "/textures/sunset_cube_map_2/py.png",
-        "/textures/sunset_cube_map_2/ny.png",
-        "/textures/sunset_cube_map_2/pz.png",
-        "/textures/sunset_cube_map_2/nz.png",
-      ],
+      CUBE_MAP,
       () => {
         scene.environment = environmentMap;
         scene.background = environmentMap;
@@ -108,9 +109,9 @@
     }
 
     // Create multiple tubes based on configuration
-    for (const config of tubeConfigurations) {
-      createTube(config.length, config.position, config.soundFile);
-    }
+    tubeConfigurations.forEach(({ length, position, soundFile }) => {
+      createTube(length, position, soundFile);
+    });
 
     // Mouse event for interaction
     window.addEventListener("click", (event: MouseEvent) => {
