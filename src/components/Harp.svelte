@@ -75,8 +75,16 @@
       position: { x: number; y: number; z: number },
       soundFile: string
     ): void {
-      const geometry = new THREE.CylinderGeometry(1, 1, length, 64, 1, true);
-      const material = new THREE.MeshPhysicalMaterial({
+      // Outer tube geometry and material
+      const outerGeometry = new THREE.CylinderGeometry(
+        1.1,
+        1.1,
+        length,
+        64,
+        1,
+        true
+      );
+      const outerMaterial = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         metalness: 0.55,
         roughness: 0.05,
@@ -94,14 +102,40 @@
         iridescenceIOR: 1.3, // Index of refraction to enhance iridescence effect
         iridescenceThicknessRange: [300, 600], // Control thickness for rainbow reflections
       });
-      const tube = new THREE.Mesh(geometry, material);
-      tube.position.set(position.x, position.y, position.z);
-      scene.add(tube);
+      const outerTube = new THREE.Mesh(outerGeometry, outerMaterial);
+      outerTube.position.set(position.x, position.y, position.z);
+      scene.add(outerTube);
 
+      // Inner tube geometry and material
+      const innerGeometry = new THREE.CylinderGeometry(
+        0.9,
+        0.9,
+        length,
+        64,
+        1,
+        true
+      );
+      const innerMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 0.3,
+        roughness: 0.2,
+        transparent: true,
+        opacity: 0.8,
+        transmission: 0.5, // Makes the inner part less transparent
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.1,
+        reflectivity: 0.5,
+      });
+      // Add an inner tube to make the outer tube look like has thicker cylinder walls
+      const innerTube = new THREE.Mesh(innerGeometry, innerMaterial);
+      innerTube.position.set(position.x, position.y, position.z);
+      scene.add(innerTube);
+
+      // Audio setup for the tube
       const audio = new Audio(soundFile);
       audio.volume = 0.5;
       let lastPlayed = 0;
-      tube.userData = {
+      outerTube.userData = {
         playSound: () => {
           console.log("Attempting to play sound:", soundFile);
           const now = Date.now();
