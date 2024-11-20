@@ -49,6 +49,7 @@
       () => {
         scene.environment = environmentMap;
         scene.background = environmentMap;
+        scene.fog = new THREE.Fog(new THREE.Color(0x202020), 150, 200);
       },
       undefined,
       (error) => {
@@ -225,6 +226,17 @@
     // Render loop
     function animate() {
       TWEEN.update();
+      // Update scene fog color gradually to simulate a dynamic effect
+      const time = Date.now() * 0.0001;
+      const hue = (time * 360) % 360;
+      scene.fog = new THREE.Fog(
+        new THREE.Color(`hsl(${hue}, 30%, 20%)`),
+        150,
+        300
+      );
+      // Subtle oscillation of directional light to enhance atmosphere
+      directionalLight.intensity = 1 + Math.sin(Date.now() * 0.001) * 0.1;
+      // Remove camera oscillation to keep tubes stationary
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
