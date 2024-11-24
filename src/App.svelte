@@ -4,10 +4,26 @@
   import HarpConfigs from "./harpConfigs";
 
   const tubes: TubeConfiguration[] = HarpConfigs.HeartE;
+  let selectedModel = "heart-e";
 </script>
 
 <main>
-  <h1>heart e</h1>
+  <div class="model-selector">
+    <h2
+      class:selected={selectedModel === "heart-e"}
+      on:click={() => (selectedModel = "heart-e")}
+      on:touchstart={() => (selectedModel = "heart-e")}
+    >
+      HEART E
+    </h2>
+    <h2
+      class:selected={selectedModel === "secretive-f"}
+      on:click={() => (selectedModel = "secretive-f")}
+      on:touchstart={() => (selectedModel = "secretive-f")}
+    >
+      SECRETIVE F
+    </h2>
+  </div>
   <Harp tubeConfigurations={tubes} />
 </main>
 
@@ -18,5 +34,26 @@
     justify-content: space-around;
     align-items: center;
     height: 100vh;
+  }
+  .model-selector {
+    position: absolute;
+    display: flex;
+    padding: 40px;
+    gap: 20px;
+    z-index: 2;
+    flex-direction: column;
+    width: fit-content;
+    left: 0;
+    top: 0;
+  }
+  h2 {
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 16px;
+    border: 2px solid transparent;
+  }
+  .selected {
+    border: 2px solid #f0f6f5;
+    border-radius: 16px;
   }
 </style>
