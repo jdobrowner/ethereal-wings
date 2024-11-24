@@ -154,9 +154,11 @@
 
     const audio = new Howl({
       src: [soundFile],
-      volume: 0.5,
+      volume: 0.4,
       html5: true,
     });
+    // Set the position of the sound in the 3D space
+    audio.pos(position.x, position.y, position.z);
 
     // Add playSound functionality to userData
     outerTube.userData = {
