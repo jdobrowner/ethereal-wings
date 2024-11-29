@@ -37,7 +37,11 @@
       SECRETIVE F
     </h2>
   </div>
-  <Harp tubeConfigurations={tubes} {selectedModel} />
+  {#if selectedModel === "secretive-f"}
+    <Harp tubeConfigurations={HarpConfigs.SecretiveF} />
+  {:else}
+    <Harp tubeConfigurations={HarpConfigs.HeartE} />
+  {/if}
 </main>
 
 <style>

@@ -17,6 +17,8 @@
     "/textures/sunset_cube_map_2/nz.png",
   ];
 
+  let howls: Howl[] = [];
+
   function initializeScene(): THREE.Scene {
     const scene = new THREE.Scene();
     const loader = new THREE.CubeTextureLoader();
@@ -157,6 +159,7 @@
       volume: 0.4,
       html5: true,
     });
+    howls.push(audio);
     // Set the position of the sound in the 3D space
     audio.pos(position.x, position.y, position.z);
 
@@ -179,6 +182,10 @@
           .start();
       },
     };
+  }
+
+  function stopAllAudio() {
+    howls.forEach((howl) => howl.stop());
   }
 
   let currentlyHovered: THREE.Mesh | null = null;
@@ -285,6 +292,7 @@
 
     // Cleanup on unmount
     return () => {
+      stopAllAudio();
       if (container.firstChild) {
         container.removeChild(container.firstChild);
       }
