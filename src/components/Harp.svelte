@@ -308,5 +308,6 @@
     width: 100%;
     height: 100vh;
     position: relative;
+    cursor: url("/textures/mallet_small.png"), auto;
   }
 </style>

@@ -3,8 +3,21 @@
   import type { TubeConfiguration } from "./types";
   import HarpConfigs from "./harpConfigs";
 
-  const tubes: TubeConfiguration[] = HarpConfigs.HeartE;
+  let tubes: TubeConfiguration[] = HarpConfigs.HeartE;
   let selectedModel = "heart-e";
+  // let selectedModel = "secretive-f";
+  $: {
+    switch (selectedModel) {
+      case "heart-e":
+        tubes = HarpConfigs.HeartE;
+        break;
+      case "secretive-f":
+        tubes = HarpConfigs.SecretiveF;
+        break;
+      default:
+        break;
+    }
+  }
 </script>
 
 <main>
@@ -24,7 +37,7 @@
       SECRETIVE F
     </h2>
   </div>
-  <Harp tubeConfigurations={tubes} />
+  <Harp tubeConfigurations={tubes} {selectedModel} />
 </main>
 
 <style>
