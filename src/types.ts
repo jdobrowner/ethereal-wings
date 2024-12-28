@@ -3,3 +3,8 @@ export type TubeConfiguration = {
   position: { x: number; y: number; z: number };
   soundFile: string;
 };
+
+export type CONTENTFUL_HARP = {
+  modelName: string;
+  tubeNotes: string[];
+}

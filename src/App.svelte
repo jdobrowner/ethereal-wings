@@ -2,6 +2,8 @@
   import Harp from "./components/Harp.svelte";
   import type { TubeConfiguration } from "./types";
   import HarpConfigs from "./harpConfigs";
+  import { onMount } from "svelte";
+  import { fetchContentfulData } from "./util/contentful";
 
   let tubes: TubeConfiguration[] = HarpConfigs.HeartE;
   let selectedModel = "heart-e";
@@ -18,6 +20,10 @@
         break;
     }
   }
+
+  onMount(async () => {
+    const harps = await fetchContentfulData();
+  });
 </script>
 
 <main>

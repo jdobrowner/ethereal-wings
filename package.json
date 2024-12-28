@@ -21,6 +21,7 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "contentful": "^11.3.4",
     "howler": "^2.2.4",
     "three": "^0.170.0"
   }
